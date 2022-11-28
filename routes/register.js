@@ -51,7 +51,7 @@ router.post("/login",async (req,res,next)=>{
       const compare = await bcrypt.compare(req.body.password,user.password)
       if(compare){
         const token = jwt.sign({_id:user._id,name:user.name},process.env.JWT_SECRET,{expiresIn:"12h"})
-        res.json({"userId" : user._id})
+        res.json({"userId" : user._id , "Name" : user.name})
       }else{
         res.status(401).json({message:"Username/password is Incorrect"})
       }
