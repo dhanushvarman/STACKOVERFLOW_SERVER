@@ -39,7 +39,8 @@ router.get('/asked-questions/:userId',async (req,res,next)=>{
     try {
         const db = await connectDb();
         var questions = await db.collection("questions").aggregate([{$match : { userId : mongodb.ObjectId(req.params.userId)}}]).toArray();
-        var comments = [];
+        if(questions){
+            var comments = [];
         questions.map(async  (question)=>{
             var comment = await db.collection("comments").aggregate([{$match : {questionId : mongodb.ObjectId(question._id)}}]).toArray();
             var commentDetail = {
@@ -57,6 +58,10 @@ router.get('/asked-questions/:userId',async (req,res,next)=>{
             }
 
         })
+        }else{
+            await closeConnection();
+            res.json({message:"No questions available"})
+        }
     } catch (error) {
         console.log(error)
         res.status(500).json({message:"Something Went Wrong in Asked Questions"})
