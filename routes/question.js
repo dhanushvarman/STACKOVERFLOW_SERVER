@@ -39,28 +39,28 @@ router.get('/asked-questions/:userId',async (req,res,next)=>{
     try {
         const db = await connectDb();
         var questions = await db.collection("questions").aggregate([{$match : { userId : mongodb.ObjectId(req.params.userId)}}]).toArray();
-        if(questions){
-            var comments = [];
-        questions.map(async  (question)=>{
-            var comment = await db.collection("comments").aggregate([{$match : {questionId : mongodb.ObjectId(question._id)}}]).toArray();
-            var commentDetail = {
-                Question : question,
-                Comments : []
-            };
-            comment.map((com)=>{
-                commentDetail.Comments.push(com.Comment)
-            })
-            comments.push(commentDetail)
-
-            if(questions.length == comments.length){
-                res.json(comments)
-                await closeConnection();
-            }
-
-        })
+        if(questions.length == 0){
+            await closeConnection()
+            res.json(questions.length)
         }else{
-            await closeConnection();
-            res.json({message:"No questions available"})
+            var comments = [];
+            questions.map(async  (question)=>{
+                var comment = await db.collection("comments").aggregate([{$match : {questionId : mongodb.ObjectId(question._id)}}]).toArray();
+                var commentDetail = {
+                    Question : question,
+                    Comments : []
+                };
+                comment.map((com)=>{
+                    commentDetail.Comments.push(com.Comment)
+                })
+                comments.push(commentDetail)
+    
+                if(questions.length == comments.length){
+                    res.json(comments)
+                    await closeConnection();
+                }
+    
+            })
         }
     } catch (error) {
         console.log(error)
