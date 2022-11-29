@@ -1,6 +1,6 @@
 var express = require('express');
 var mongodb = require('mongodb')
-const { connectDb, closeConnection, db } = require('../config');
+const { connectDb, closeConnection } = require('../config');
 var router = express.Router();
 
 router.get('/view-tag/',async (req,res,next)=>{
@@ -27,6 +27,7 @@ router.get('/view-tag/',async (req,res,next)=>{
             }
         })
         
+
     } catch (error) {
         console.log(error)
         res.status(500).json({message:"Something Went Wrong in tag section"})
