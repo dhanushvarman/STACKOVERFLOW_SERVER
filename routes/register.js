@@ -71,7 +71,7 @@ router.post("/forgot-password", async(req,res,next)=>{
     const user = await db.collection("users").findOne({username : req.body.username})
     if(user){
       const token = jwt.sign({_id:user._id,username:user.username},process.env.JWT_SECRET,{expiresIn:"15m"})
-      const link = `http://localhost:3000/register/reset-password/${user._id}/${token}`;
+      const link = `https://stackoverflow-server.onrender.com/register/reset-password/${user._id}/${token}`;
       var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
